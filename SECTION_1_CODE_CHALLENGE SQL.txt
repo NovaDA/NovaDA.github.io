@@ -1,0 +1,158 @@
+
+
+SECTION 1:
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+Question 1 : V
+
+
+SELECT p.PolicyNumber, q.QuoteValue ,q.QuoteDate
+FROM tbl_quote q
+JOIN tbl_policy p
+	ON q.PolicyID = p.PolicyID
+WHERE q.DateCreated BETWEEN '2010-05-03' AND '2009-10-01'
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+Question 2:
+
+SELECT
+	a.AccountName,
+	a.address1,
+	a.address2,
+	a.address3,
+	COUNT(p.contactID) AS cases_created_in_2011
+
+FROM tbl_policy p
+
+JOIN tbl_contact c
+	ON p.ContactID = c.ContactID
+JOIN tbl_account a
+	ON c.AccountID = a.AcccountID
+WHERE 
+	p.DateCreated BETWEEN '2010-01-01' AND '2010-12-31'
+
+GROUP BY p.contactID
+
+HAVING
+	COUNT(p.contactID) > 5
+
+//////////////////////////////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+
+Question 3:
+
+SELECT
+	a.AccountName,
+	AVG(q.QuoteValue) as average quote value per year	
+
+FROM tbl_account a
+JOIN tbl_contact c
+	ON a.AccountID = c.AccountID 
+JOIN tbl_policy p
+	ON c.ContactID = p.ContactID
+JOIN tbl_quote q
+	ON p.PolicyID = q.PolicyID
+WHERE 
+	q.DateDate BETWEEN '2021-01-01' AND '2021-12-31'
+
+GROUP BY a.AccountID
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+
+
+
+Question 4:
+
+SELECT
+	a.AccountName,
+	c.LastName,
+	p.PolicyNumber,
+	q.QuoteNumber,
+	q.QuoteDate,
+	q.QuoteValue,
+
+FROM tbl_quote q
+JOIN tbl_policy p
+	ON q.PolicyID = p.PolicyID
+JOIN tbl_contact c
+	ON p.ContactID = c.ContactID
+JOIN tbl_account a
+	ON c.AccountID = a.AcccountID
+WHERE  q.QuoteValue = ( SELECT
+				qq.QuoteValue
+				FROM tbl_quote qq
+				WHERE a.Postcode REGEXP '^EC1'
+				ORDER BY qq.QuoteValue DESC
+				LIMIT 1 OFFSET 2);
+
+///////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+Question 5:
+	
+SELECT
+	c.FirstName,
+	c.LastName
+
+FROM tbl_quote q
+
+JOIN tbl_policy p
+	ON q.PolicyID = p.PolicyID
+JOIN tbl_contact c
+	ON p.ContactID = c.ContactID
+JOIN tbl_account a
+	ON c.AccountID = a.AcccountID
+WHERE 
+	q.QuoteDate = ( SELECT 
+				MAX(qq.QuoteDate)
+				FROM  tbl_quote qq
+				WHERE a.Postcode REGEXP '^EC1'
+				ORDER BY qq.QuoteDate DESC
+				LIMIT 1);
+UNION
+
+SELECT
+	c.FirstName,
+	c.LastName
+
+FROM tbl_quote q
+
+JOIN tbl_policy p
+	ON q.PolicyID = p.PolicyID
+JOIN tbl_contact c
+	ON p.ContactID = c.ContactID
+JOIN tbl_account a
+	ON c.AccountID = a.AcccountID
+WHERE 
+	q.QuoteDate  = ( SELECT 
+				MIN(qq.QuoteDate)
+				FROM  tbl_quote qq
+				WHERE a.Postcode REGEXP '^EC1'
+				ORDER BY qq.QuoteDate ASC
+				LIMIT 1);
+
+///////////////////////////////////////////////////////////////////////////////////////
+	
+
+
+
+
+
+	
+	
